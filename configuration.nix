@@ -62,20 +62,9 @@
 
   # Enable the zsh shell
   programs.zsh.enable = true;
-
-  # Enable podman container service
-  virtualisation.podman = {
-  enable = true;
-  };
-
-  # Enable docker container service
-  virtualisation.docker = {
-    enable = true;
-    daemon.settings.features.containerd-snapshotter = true;
-    logDriver = "json-file";
-  };
-
-  networking.hostName = "strickland2"; # Define your hostname.
+  
+  # Hostname
+  networking.hostName = "strickland"; # Define your hostname.
 
   # Configure network connections interactively with nmcli or nmtui.
   # networking.networkmanager.enable = true;
@@ -89,7 +78,7 @@
     };
   };
   networking.interfaces.br0.ipv4.addresses = [ {
-    address = "10.10.10.54";
+    address = "10.10.10.2";
     prefixLength = 24;
   } ];
   networking.defaultGateway = "10.10.10.1";
