@@ -11,8 +11,11 @@
     ];
 
   # Use the systemd-boot EFI boot loader.
+  hardware.cpu.intel.updateMicrocode = true;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.swraid.enable = true;
+  boot.swraid.mdadmConf = "MAILADDR root";
 
   # Enable incus virtualization
   virtualisation.incus.enable = true;
@@ -49,7 +52,7 @@
     storage_pools = [
       {
         config = {
-          source = "/var/lib/incus/storage-pools/default";
+          source = "/vmstorage/storage-pools/default";
         };
         driver = "dir";
         name = "default";
@@ -70,11 +73,11 @@
   # networking.networkmanager.enable = true;
 
   networking.useDHCP = false;
-  networking.interfaces.enp1s0.useDHCP = true;
+  networking.interfaces.eno1.useDHCP = true;
   networking.interfaces.br0.useDHCP = false;
   networking.bridges = {
     "br0" = {
-      interfaces = [ "enp1s0" ];
+      interfaces = [ "eno1" ];
     };
   };
   networking.interfaces.br0.ipv4.addresses = [ {
@@ -108,10 +111,13 @@
     smartmontools
     git
     curl
+    mdadm
+    gptfdisk
   ];
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+  services.openssh.settings.PasswordAuthentication = false;
   services.openssh.settings.X11Forwarding = true;
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
