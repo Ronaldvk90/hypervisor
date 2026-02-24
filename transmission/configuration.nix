@@ -21,17 +21,23 @@
   # Enable the Flakes feature and the accompanying new nix command-line tool
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-services.jellyfin = {
+  services.transmission = {
   enable = true;
-  openFirewall = true;
-};
-#  services.jellyfin.enable = true;
+  credentialsFile = "/var/lib/secrets/transmission/settings.json";
+  openRPCPort = true;
+
+  settings = {
+    rpc-bind-address = "0.0.0.0";
+    rpc-whitelost-enavle = "true";
+    rpc-whitelist = "127.0.0.1,10.10.10.*";
+    incomplete-dir = "/mnt/ronald/tmp";
+    download-dir = "/mnt/ronald";
+    };
+  };
+ 
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     git
-    jellyfin
-    jellyfin-web
-    jellyfin-ffmpeg
   ];
 
   imports = [
@@ -67,18 +73,21 @@ services.jellyfin = {
  fileSystems."/mnt/ronald" = {
    device = "//10.10.10.3/ronald";
    fsType = "cifs";
-   options = [ "credentials=/root/.ronald" "x-systemd.automount" "auto" "uid=996" "gid=995" "file_mode=0700" "dir_mode=0700" ];
+   options = [ "credentials=/root/.ronald" "x-systemd.automount" "auto" "uid=70" "gid=70" "file_mode=0700" "dir_mode=0700" ];
  };
 
  fileSystems."/mnt/debbie" = {
    device = "//10.10.10.3/debbie";
    fsType = "cifs";
-   options = [ "credentials=/root/.debbie" "x-systemd.automount" "auto" "uid=996" "gid=995" "file_mode=0700" "dir_mode=0700" ];
+   options = [ "credentials=/root/.debbie" "x-systemd.automount" "auto" "uid=70" "gid=70" "file_mode=0700" "dir_mode=0700" ];
  };
 ##########################################################
 
   # Disabe password authentication for wheel group
   security.sudo.wheelNeedsPassword = false;
+
+  # Allow transmission traffic
+  networking.firewall.allowedTCPPorts = [ 51413 ];
 
   # networking.firewall.allowedTCPPorts = [ 8096 ];
   system.stateVersion = "25.11"; # Did you read the comment?

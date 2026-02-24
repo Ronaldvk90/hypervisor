@@ -97,6 +97,7 @@
     shell = pkgs.zsh;
     isNormalUser = true;
     extraGroups = [ "wheel" "docker" "incus-admin" ];
+    hashedPassword = "$6$Iv6NWzA.rVjoD0PS$FuW/U6J4fhEGsaMLbkRjoBZJoy6HPAUG8eajpHsiskkM9KEnturay11X5rbgFUncH.Mr0johepUvuJzbOsh.u.";
     packages = with pkgs; [
       tree
     ];

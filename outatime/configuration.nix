@@ -22,6 +22,7 @@
     isNormalUser = true;
     description = "Ronald van Kouwen";
     extraGroups = [ "wheel" ];
+    hashedPassword = "$6$Iv6NWzA.rVjoD0PS$FuW/U6J4fhEGsaMLbkRjoBZJoy6HPAUG8eajpHsiskkM9KEnturay11X5rbgFUncH.Mr0johepUvuJzbOsh.u.";
     packages = with pkgs; [];
   };
 
@@ -58,9 +59,12 @@
     };
   };
 
+  # Sudo no need for pw
+  security.sudo.wheelNeedsPassword = false;
+
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-  services.openssh.passwordAuthentication = false;  
+  services.openssh.settings.PasswordAuthentication = false;
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
