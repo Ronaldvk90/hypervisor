@@ -14,12 +14,15 @@
   hardware.cpu.intel.updateMicrocode = true;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.swraid.enable = true;
-  boot.swraid.mdadmConf = "MAILADDR root";
+  
+  # Add ZFS at boot time, and enable my own "storage" pool.
+  boot.supportedFilesystems = [ "zfs" ];
+  boot.zfs.extraPools = [ "storage" ];
 
   # Enable incus virtualization
   virtualisation.incus.enable = true;
   networking.nftables.enable = true;
+ 
   virtualisation.incus.preseed = {
     networks = [
       {
@@ -41,7 +44,7 @@
           };
           root = {
             path = "/";
-            pool = "default";
+            pool = "storage";
             size = "35GiB";
             type = "disk";
           };
@@ -51,11 +54,11 @@
     ];
     storage_pools = [
       {
-        config = {
-          source = "/vmstorage/storage-pools/default";
-        };
-        driver = "dir";
-        name = "default";
+      config = {
+        source = "storage";
+       };
+       driver = "zfs";
+       name = "storage";
       }
     ];
   };
@@ -70,8 +73,7 @@
   networking.hostName = "strickland"; # Define your hostname.
 
   # Configure network connections interactively with nmcli or nmtui.
-  # networking.networkmanager.enable = true;
-
+  networking.hostId = "139e6408";
   networking.useDHCP = false;
   networking.interfaces.eno1.useDHCP = true;
   networking.interfaces.br0.useDHCP = false;
@@ -96,7 +98,7 @@
   users.users.ronald = {
     shell = pkgs.zsh;
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" "incus-admin" ];
+    extraGroups = [ "wheel" "incus-admin" ];
     hashedPassword = "$6$Iv6NWzA.rVjoD0PS$FuW/U6J4fhEGsaMLbkRjoBZJoy6HPAUG8eajpHsiskkM9KEnturay11X5rbgFUncH.Mr0johepUvuJzbOsh.u.";
     packages = with pkgs; [
       tree
@@ -112,8 +114,7 @@
     smartmontools
     git
     curl
-    mdadm
-    gptfdisk
+    zfs
   ];
 
   # Enable the OpenSSH daemon.
