@@ -105,6 +105,16 @@
     ];
   };
 
+  # Add a zabbix client on the server
+  services.zabbixAgent = {
+    enable = true;
+    server = "10.10.10.16";
+    settings = {
+      ServerActive = "10.10.10.16";
+      Hostname = "strickland";
+    };
+  };
+
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
@@ -115,6 +125,7 @@
     git
     curl
     zfs
+    zabbix.agent
   ];
 
   # Enable the OpenSSH daemon.
@@ -122,10 +133,11 @@
   services.openssh.settings.PasswordAuthentication = false;
   services.openssh.settings.X11Forwarding = true;
   # Open ports in the firewall.
+  networking.firewall.allowedTCPPorts = [ 22 10050 ];
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
-  networking.firewall.enable = false;
+  networking.firewall.enable = true;
 
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.11"; # Did you read the comment?

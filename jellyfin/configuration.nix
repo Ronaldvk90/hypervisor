@@ -18,20 +18,31 @@
     packages = with pkgs; [];
   };
 
+  # Add a zabbix client on the server
+  services.zabbixAgent = {
+    enable = true;
+    server = "10.10.10.16";
+    settings = {
+      ServerActive = "10.10.10.16";
+      Hostname = "jellyfin";
+    };
+  };
+
   # Enable the Flakes feature and the accompanying new nix command-line tool
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-services.jellyfin = {
-  enable = true;
-  openFirewall = true;
-};
-#  services.jellyfin.enable = true;
+  services.jellyfin = {
+    enable = true;
+    openFirewall = true;
+  };
+  #  services.jellyfin.enable = true;
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     git
     jellyfin
     jellyfin-web
     jellyfin-ffmpeg
+    zabbix.agent
   ];
 
   imports = [
@@ -79,6 +90,10 @@ services.jellyfin = {
 
   # Disabe password authentication for wheel group
   security.sudo.wheelNeedsPassword = false;
+
+  # Allow zabbix traffic
+  networking.firewall.enable = true;
+  networking.firewall.allowedTCPPorts = [ 22 10050 ];
 
   # networking.firewall.allowedTCPPorts = [ 8096 ];
   system.stateVersion = "25.11"; # Did you read the comment?
